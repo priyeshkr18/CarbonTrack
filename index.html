@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EcoTrace - Advanced Carbon Footprint Calculator and Sustainability Platform">
+    <meta name="theme-color" content="#0f172a">
+    <title>EcoTrace | Sustainability Intelligence</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="text-slate-200 overflow-x-hidden antialiased">
+
+    <canvas id="particle-canvas"></canvas>
+
+    <section id="view-auth" class="active-section flex flex-col items-center justify-center min-h-screen relative z-10 px-4">
+        
+        <div class="glass-card max-w-md w-full p-10 rounded-3xl border-t border-emerald-500/20 shadow-2xl">
+            <div class="text-center mb-10">
+                <div class="w-24 h-24 bg-gradient-to-br from-emerald-500 to-cyan-700 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-6 transform rotate-3">
+                    <i class="fa-solid fa-leaf text-white text-4xl"></i>
+                </div>
+                
+                <h1 class="text-5xl font-extrabold text-white tracking-tight mb-2">
+                    EcoTrace<span class="text-emerald-400">.ai</span>
+                </h1>
+                <p class="text-gray-400 text-sm font-light tracking-wide uppercase">
+                    Global Sustainability Grid
+                </p>
+            </div>
+
+            <form id="login-form" class="space-y-6">
+                <div class="group">
+                    <label class="block text-xs font-bold text-emerald-500 uppercase tracking-widest mb-2 ml-1">
+                        Identity Protocol
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-fingerprint text-gray-500"></i>
+                        </div>
+                        <input type="email" 
+                               value="user@ecotrace.io" 
+                               class="w-full bg-slate-900/80 border border-slate-700 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner"
+                               placeholder="Enter your ID">
+                    </div>
+                </div>
+
+                <div class="group">
+                    <label class="block text-xs font-bold text-emerald-500 uppercase tracking-widest mb-2 ml-1">
+                        Secure Key
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-shield-halved text-gray-500"></i>
+                        </div>
+                        <input type="password" 
+                               value="password" 
+                               class="w-full bg-slate-900/80 border border-slate-700 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner"
+                               placeholder="••••••••">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg transition-colors duration-300 flex justify-center items-center gap-2">
+                    <span>Initialize Session</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+            
+            <div class="mt-8 text-center">
+                <p class="text-xs text-gray-600">Secure AES-256 Connection Verified</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="app-wrapper" class="hidden relative z-10 min-h-screen flex flex-col pb-20">
+        
+        <nav class="glass-header sticky top-0 z-50 border-b border-white/5 backdrop-blur-xl">
+            <div class="max-w-7xl mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    
+                    <div class="flex items-center gap-3 group cursor-pointer" onclick="UI.switchView('dashboard')">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                            <i class="fa-solid fa-seedling text-emerald-400"></i>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-xl text-white tracking-tight leading-none">EcoTrace</span>
+                            <span class="text-[10px] text-gray-400 uppercase tracking-widest">v2.0.1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-6">
+                        <div class="hidden md:flex gap-1 bg-slate-800/50 p-1 rounded-lg border border-white/10">
+                            <button onclick="UI.switchView('dashboard')" class="nav-btn active-nav px-6 py-2 rounded-md text-sm font-bold transition-all">
+                                Dashboard
+                            </button>
+                            <button onclick="UI.switchView('profile')" class="nav-btn px-6 py-2 rounded-md text-sm font-bold text-gray-400 hover:text-white transition-all">
+                                Profile
+                            </button>
+                            <button onclick="UI.switchView('community')" class="nav-btn px-6 py-2 rounded-md text-sm font-bold text-gray-400 hover:text-white transition-all">
+                                Network
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <button onclick="UI.toggleSettings()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors">
+                                <i class="fa-solid fa-gear text-gray-400 text-xs"></i>
+                            </button>
+                            <button onclick="Auth.logout()" class="text-xs font-bold text-red-400 hover:text-red-300 transition-colors px-3 py-1 border border-red-500/20 rounded hover:bg-red-500/10">
+                                DISCONNECT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-grow max-w-7xl mx-auto px-6 py-10 w-full space-y-12">
+            
+            <section id="view-dashboard" class="view-section active-view space-y-12">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    <div class="lg:col-span-7 glass-card p-8 rounded-3xl relative overflow-hidden border border-white/5">
+                        <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+                        
+                        <div class="mb-10 relative z-10">
+                            <h2 class="text-3xl font-bold text-white mb-2">Calculate your Carbon Footprint</h2>
+                            <p class="text-gray-400 text-sm">Please input your monthly consumption data below. Accuracy matters.</p>
+                        </div>
+
+                        <form id="carbon-form" class="space-y-10 relative z-10">
+                            
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-end">
+                                    <label class="flex items-center text-sm font-bold text-gray-300 uppercase tracking-wide">
+                                        <div class="w-8 h-8 rounded bg-yellow-500/20 flex items-center justify-center mr-3 text-yellow-500">
+                                            <i class="fa-solid fa-bolt"></i>
+                                        </div>
+                                        Electricity Usage
+                                    </label>
+                                    <span id="disp-elec" class="text-emerald-400 font-mono font-bold bg-slate-900 px-3 py-1 rounded border border-slate-700">200 kWh</span>
+                                </div>
+                                <input type="range" id="inp-elec" min="0" max="1000" value="200" class="w-full range-slider">
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-end">
+                                    <label class="flex items-center text-sm font-bold text-gray-300 uppercase tracking-wide">
+                                        <div class="w-8 h-8 rounded bg-red-500/20 flex items-center justify-center mr-3 text-red-500">
+                                            <i class="fa-solid fa-car"></i>
+                                        </div>
+                                        Weekly Mileage
+                                    </label>
+                                    <span id="disp-car" class="text-emerald-400 font-mono font-bold bg-slate-900 px-3 py-1 rounded border border-slate-700">100 km</span>
+                                </div>
+                                <input type="range" id="inp-car" min="0" max="800" value="100" class="w-full range-slider accent-red-500">
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-end">
+                                    <label class="flex items-center text-sm font-bold text-gray-300 uppercase tracking-wide">
+                                        <div class="w-8 h-8 rounded bg-blue-500/20 flex items-center justify-center mr-3 text-blue-500">
+                                            <i class="fa-solid fa-plane-departure"></i>
+                                        </div>
+                                        Yearly Flights
+                                    </label>
+                                    <span id="disp-flight" class="text-emerald-400 font-mono font-bold bg-slate-900 px-3 py-1 rounded border border-slate-700">2 flights</span>
+                                </div>
+                                <input type="range" id="inp-flight" min="0" max="20" value="2" class="w-full range-slider">
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-end">
+                                    <label class="flex items-center text-sm font-bold text-gray-300 uppercase tracking-wide">
+                                        <div class="w-8 h-8 rounded bg-orange-500/20 flex items-center justify-center mr-3 text-orange-500">
+                                            <i class="fa-solid fa-burger"></i>
+                                        </div>
+                                        Meat Consumption
+                                    </label>
+                                    <span id="disp-meat" class="text-emerald-400 font-mono font-bold bg-slate-900 px-3 py-1 rounded border border-slate-700">5 meals/wk</span>
+                                </div>
+                                <input type="range" id="inp-meat" min="0" max="21" value="5" class="w-full range-slider">
+                            </div>
+
+                            <div class="pt-8 border-t border-white/5 flex justify-end">
+                                <button type="button" onclick="Calculator.process()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-4 px-10 rounded-xl shadow-lg transition-all hover:scale-105 flex items-center gap-3">
+                                    RUN ANALYSIS <i class="fa-solid fa-microchip"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-5 flex flex-col gap-6">
+                        
+                        <div id="kid-card" class="glass-card p-8 rounded-3xl flex-1 flex flex-col justify-center items-center text-center transition-all duration-500 border border-white/10">
+                            
+                            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Future Generation Interface</h3>
+
+                            <div class="w-48 h-48 mb-6 bg-slate-800 rounded-full border-4 border-slate-700 shadow-2xl overflow-hidden relative group">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+                                <img id="future-kid-img" 
+                                     src="sad.png`  1" 
+                                     alt="Kid of the Future" 
+                                     class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                            </div>
+                            
+                            <div id="result-display" class="hidden w-full animate-fade-in">
+                                <div class="text-center mb-4">
+                                    <span class="text-xs text-emerald-400 font-bold uppercase">Estimated Impact</span>
+                                    <div class="text-5xl font-extrabold text-white tracking-tighter mt-1">
+                                        <span id="result-number">0.00</span> 
+                                        <span class="text-xl text-gray-500 font-normal">tons/yr</span>
+                                    </div>
+                                </div>
+                                
+                                <div id="kid-message-box" class="p-4 rounded-xl bg-slate-800/50 border border-white/5 transition-colors duration-500">
+                                    <p id="kid-message" class="text-sm text-gray-400 italic">
+                                        "Calculating..."
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div id="initial-message" class="text-gray-500 text-sm italic mt-4">
+                                "I am waiting for you to input your data..."
+                            </div>
+
+                        </div>
+
+                        <div id="chart-container" class="glass-card p-6 rounded-3xl h-72 relative hidden">
+                            <h4 class="absolute top-6 left-6 text-xs font-bold text-gray-500 uppercase">Breakdown</h4>
+                            <canvas id="footprintChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-profile" class="view-section hidden space-y-8">
+                <div class="glass-card p-8 rounded-3xl flex flex-col md:flex-row gap-8 items-center md:items-start relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-emerald-600/20 to-blue-600/20"></div>
+                    
+                    <div class="relative z-10 w-24 h-24 rounded-full border-4 border-slate-900 bg-slate-800 flex items-center justify-center shadow-xl">
+                        <i class="fa-solid fa-user-astronaut text-4xl text-gray-400"></i>
+                        <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-2 border-slate-900" title="Online"></div>
+                    </div>
+                    
+                    <div class="relative z-10 flex-1 text-center md:text-left">
+                        <h2 class="text-3xl font-bold text-white">Guardian Pilot</h2>
+                        <p class="text-emerald-400 text-sm mb-4">Level 5 Sustainability Architect</p>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                            <div class="bg-slate-900/50 px-4 py-2 rounded-lg border border-white/10">
+                                <span class="block text-xs text-gray-500 uppercase">Total Reduction</span>
+                                <span class="text-lg font-bold text-white">12.4 Tons</span>
+                            </div>
+                            <div class="bg-slate-900/50 px-4 py-2 rounded-lg border border-white/10">
+                                <span class="block text-xs text-gray-500 uppercase">Streak</span>
+                                <span class="text-lg font-bold text-orange-400"><i class="fa-solid fa-fire mr-1"></i> 14 Days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl">
+                    <h3 class="text-lg font-bold text-white mb-6">Emission History</h3>
+                    <div class="h-64 w-full">
+                        <canvas id="historyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-community" class="view-section hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="glass-card p-6 rounded-3xl">
+                            <textarea id="post-input" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-emerald-500" rows="3" placeholder="Share your sustainability milestone..."></textarea>
+                            <div class="flex justify-end mt-2">
+                                <button onclick="Community.addPost()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-6 py-2 rounded-lg transition-colors">
+                                    POST UPDATE
+                                </button>
+                            </div>
+                        </div>
+                        <div id="feed-stream" class="space-y-4"></div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="glass-card p-6 rounded-3xl">
+                            <h3 class="font-bold text-white mb-4">Trending Topics</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-slate-800 rounded-full text-xs text-gray-400">#SolarPower</span>
+                                <span class="px-3 py-1 bg-slate-800 rounded-full text-xs text-gray-400">#Veganuary</span>
+                                <span class="px-3 py-1 bg-slate-800 rounded-full text-xs text-gray-400">#EVRevolution</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="mt-auto border-t border-white/5 py-8 text-center">
+            <p class="text-xs text-gray-600">© 2025 EcoTrace Systems. Saving the future, one calculation at a time.</p>
+        </footer>
+    </div>
+
+    <div id="trophy-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity" onclick="UI.closeModal()"></div>
+        <div class="relative bg-slate-900 p-10 rounded-3xl border border-yellow-500/30 text-center max-w-sm mx-4 shadow-2xl transform transition-all scale-100">
+            <div id="modal-icon-container" class="mb-6">
+                </div>
+            <h2 id="modal-title" class="text-3xl font-bold text-white mb-2"></h2>
+            <p id="modal-desc" class="text-gray-400 text-sm mb-8 leading-relaxed"></p>
+            <button onclick="UI.closeModal()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded-full transition-all hover:scale-105 shadow-lg">
+                Continue Journey
+            </button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="UI.toggleSettings()"></div>
+        <div class="relative bg-slate-900 p-8 rounded-2xl border border-slate-700 w-full max-w-md mx-4">
+            <h3 class="text-xl font-bold text-white mb-6">System Settings</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400 text-sm">High Contrast Mode</span>
+                    <div class="w-10 h-5 bg-slate-700 rounded-full relative cursor-pointer"><div class="absolute left-1 top-1 w-3 h-3 bg-gray-400 rounded-full"></div></div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400 text-sm">Data Retention</span>
+                    <span class="text-emerald-400 text-xs">Local Only</span>
+                </div>
+            </div>
+            <button onclick="UI.toggleSettings()" class="mt-8 w-full py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-white">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

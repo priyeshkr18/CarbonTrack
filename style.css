@@ -1,0 +1,205 @@
+/* ==========================================================================
+   1. ROOT VARIABLES & RESET
+   ========================================================================== */
+:root {
+    /* Main Background - Deep Space Blue/Black */
+    --bg-dark: #050b14; 
+    
+    /* Glassmorphism Variables */
+    --glass-bg: rgba(15, 23, 42, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    
+    /* Brand Colors */
+    --primary: #10b981; /* Emerald */
+    --secondary: #0f766e; /* Teal */
+    --accent: #eab308;  /* Yellow/Gold */
+    --danger: #ef4444;  /* Red */
+    
+    /* Transition Defaults */
+    --trans-fast: 0.2s ease;
+    --trans-med: 0.4s ease-in-out;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    font-family: 'Outfit', sans-serif;
+    color: #f1f5f9;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   2. CUSTOM SCROLLBAR
+   ========================================================================== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* ==========================================================================
+   3. NETWORK BACKGROUND CANVAS
+   ========================================================================== */
+#particle-canvas {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    z-index: 0; /* Ensures it stays behind content */
+    pointer-events: auto; /* Allows mouse interaction */
+}
+
+/* ==========================================================================
+   4. GLASSMORPHISM COMPONENT SYSTEM
+   ========================================================================== */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); /* Safari support */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--glass-border);
+    transition: transform var(--trans-fast), border-color var(--trans-fast);
+}
+
+.glass-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.glass-header {
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    transition: background var(--trans-med);
+}
+
+/* ==========================================================================
+   5. NAVIGATION & BUTTONS
+   ========================================================================== */
+.nav-btn {
+    color: #94a3b8;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+}
+
+.active-nav {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.nav-btn:hover:not(.active-nav) {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   6. FORM INPUTS & RANGE SLIDERS
+   ========================================================================== */
+/* The Range Slider Track */
+.range-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #1e293b;
+    border-radius: 4px;
+    outline: none;
+    transition: background var(--trans-fast);
+    cursor: pointer;
+}
+
+.range-slider:hover {
+    background: #334155;
+}
+
+/* The Thumb (Handle) */
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: grab;
+    border: 3px solid #fff;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    transition: transform 0.1s ease, background 0.2s;
+    margin-top: -8px; /* Corrects alignment in some browsers */
+}
+
+/* Chrome/Safari Thumb */
+.range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: #34d399;
+}
+
+/* Specific Accent Colors for Sliders */
+.accent-red-500::-webkit-slider-thumb {
+    background: var(--danger);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.accent-red-500::-webkit-slider-thumb:hover {
+    background: #f87171;
+}
+
+/* ==========================================================================
+   7. UTILITY & ANIMATIONS
+   ========================================================================== */
+.hidden {
+    display: none !important;
+}
+
+/* Fade In Animation */
+.animate-fade-in {
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* Pulse Animation for specific alerts */
+@keyframes softPulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* ==========================================================================
+   8. MEDIA QUERIES (Responsive Adjustment)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .glass-card {
+        padding: 1.5rem;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    .text-5xl {
+        font-size: 2.5rem;
+    }
+}
